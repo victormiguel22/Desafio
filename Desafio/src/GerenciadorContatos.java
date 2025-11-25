@@ -18,7 +18,7 @@ class GerenciadorContatos {
     }
 
     public void adicionarContato(Contato contato) {
-        // Verifica se já existe um contato com o mesmo ID
+        // verifica se tem id repetido
         for (Contato c : contatos) {
             if (c.getId() == contato.getId()) {
                 // Gera um novo ID único
@@ -31,7 +31,7 @@ class GerenciadorContatos {
         contatos.add(contato);
     }
     
-    // Método auxiliar para gerar um ID único
+    // metodo auxiliar
     private int gerarNovoId() {
         int maxId = 0;
         for (Contato c : contatos) {
@@ -58,7 +58,7 @@ class GerenciadorContatos {
         System.out.println("=========================\n");
     }
 
-    // Leitura de JSON (Parser manual corrigido)
+    // lê JSON
     public void lerJSON(String arquivo) throws IOException {
         StringBuilder sb = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
@@ -69,42 +69,40 @@ class GerenciadorContatos {
         }
         
         String json = sb.toString();
-        // Remove [ e ]
         json = json.substring(1, json.length() - 1);
         
-        // Divide por objetos (procura por padrão },{)
+        
         String[] objetos = json.split("\\}\\s*,\\s*\\{");
         
         for (String obj : objetos) {
-            // Remove { e } se ainda existirem
             obj = obj.replace("{", "").replace("}", "").trim();
             
             int id = 0;
             String nome = "", email = "", telefone = "", dataNasc = "";
             
-            // Parser manual mais robusto
+            // parser manual
             int pos = 0;
             while (pos < obj.length()) {
-                // Encontra o início da chave
+                // encontra o iniico da chave
                 int chavInicio = obj.indexOf("\"", pos);
                 if (chavInicio == -1) break;
                 
                 int chavFim = obj.indexOf("\"", chavInicio + 1);
                 String chave = obj.substring(chavInicio + 1, chavFim);
                 
-                // Pula o ":"
+                // pula ":"
                 int valorInicio = obj.indexOf(":", chavFim) + 1;
                 
-                // Determina onde o valor termina
+                // determina o final
                 String valor;
                 if (obj.charAt(valorInicio) == '"' || (valorInicio < obj.length() && obj.substring(valorInicio).trim().startsWith("\""))) {
-                    // Valor é string
+                    // valor é string
                     valorInicio = obj.indexOf("\"", valorInicio) + 1;
                     int valorFim = obj.indexOf("\"", valorInicio);
                     valor = obj.substring(valorInicio, valorFim);
                     pos = valorFim + 1;
                 } else {
-                    // Valor é número
+                    // valor é numero
                     int valorFim = obj.indexOf(",", valorInicio);
                     if (valorFim == -1) {
                         valorFim = obj.length();
@@ -113,7 +111,6 @@ class GerenciadorContatos {
                     pos = valorFim + 1;
                 }
                 
-                // Atribui o valor ao campo correspondente
                 switch (chave) {
                     case "id": id = Integer.parseInt(valor); break;
                     case "nome": nome = valor; break;
@@ -125,7 +122,7 @@ class GerenciadorContatos {
             
             LocalDate data = LocalDate.parse(dataNasc, DATE_FORMATTER);
             
-            // Verifica se já existe um contato com o mesmo ID
+            // verifica se tem id repetido
             for (Contato c : contatos) {
                 if (c.getId() == id) {
                     int idOriginal = id;
@@ -139,7 +136,7 @@ class GerenciadorContatos {
         }
     }
 
-    // Escrita em JSON
+    // escreve em json
     public void escreverJSON(String arquivo) throws IOException {
         try (PrintWriter pw = new PrintWriter(new FileWriter(arquivo))) {
             pw.println("[");
@@ -162,7 +159,7 @@ class GerenciadorContatos {
         }
     }
 
-    // Leitura de XML
+    // le em XML
     public void lerXML(String arquivo) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -182,7 +179,7 @@ class GerenciadorContatos {
                 DATE_FORMATTER
             );
             
-            // Verifica se já existe um contato com o mesmo ID
+            //  // verifica se tem id repetido
             for (Contato c : contatos) {
                 if (c.getId() == id) {
                     int idOriginal = id;
@@ -196,7 +193,7 @@ class GerenciadorContatos {
         }
     }
 
-    // Escrita em XML
+    // escreve em XML
     public void escreverXML(String arquivo) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -239,7 +236,7 @@ class GerenciadorContatos {
         transformer.transform(source, result);
     }
 
-    // Leitura de YAML (Parser manual)
+    // lê YAML
     public void lerYAML(String arquivo) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
             String linha;
@@ -271,7 +268,7 @@ class GerenciadorContatos {
             if (id != 0) {
                 LocalDate data = LocalDate.parse(dataNasc, DATE_FORMATTER);
                 
-                // Verifica se já existe um contato com o mesmo ID
+                // verifica se tem id repetido
                 for (Contato c : contatos) {
                     if (c.getId() == id) {
                         int idOriginal = id;
@@ -286,7 +283,7 @@ class GerenciadorContatos {
         }
     }
 
-    // Escrita em YAML
+    // escreve em YAML
     public void escreverYAML(String arquivo) throws IOException {
         try (PrintWriter pw = new PrintWriter(new FileWriter(arquivo))) {
             for (Contato c : contatos) {
@@ -299,7 +296,7 @@ class GerenciadorContatos {
         }
     }
 
-    // Leitura de CSV
+    // lê em CSV
     public void lerCSV(String arquivo) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
             String linha = br.readLine(); // Pula cabeçalho
@@ -312,7 +309,7 @@ class GerenciadorContatos {
                 String telefone = dados[3].trim();
                 LocalDate data = LocalDate.parse(dados[4].trim(), DATE_FORMATTER);
                 
-                // Verifica se já existe um contato com o mesmo ID
+                // verifica se tem id repetido
                 for (Contato c : contatos) {
                     if (c.getId() == id) {
                         int idOriginal = id;
@@ -327,7 +324,7 @@ class GerenciadorContatos {
         }
     }
 
-    // Escrita em CSV
+    // escreve em CSV
     public void escreverCSV(String arquivo) throws IOException {
         try (PrintWriter pw = new PrintWriter(new FileWriter(arquivo))) {
             pw.println("id,nome,email,telefone,dataNascimento");
@@ -344,7 +341,7 @@ class GerenciadorContatos {
         }
     }
 
-    // Leitura de TOON
+    // lê TOON
     public void lerTOON(String arquivo) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
             String linha;
@@ -406,7 +403,7 @@ class GerenciadorContatos {
                         }
                     }
                 } else if (linha.isEmpty() && dentroContato && id != 0) {
-                    // Verifica se já existe um contato com o mesmo ID
+                	 // verifica se tem id repetido
                     for (Contato c : contatos) {
                         if (c.getId() == id) {
                             int idOriginal = id;
@@ -420,9 +417,8 @@ class GerenciadorContatos {
                 }
             }
             
-            // Adiciona o último contato se existir
             if (dentroContato && id != 0) {
-                // Verifica se já existe um contato com o mesmo ID
+            	 // verifica se tem id repetido
                 for (Contato c : contatos) {
                     if (c.getId() == id) {
                         int idOriginal = id;
@@ -436,7 +432,7 @@ class GerenciadorContatos {
         }
     }
 
-    // Escrita em TOON
+    // escreve em TOON
     public void escreverTOON(String arquivo) throws IOException {
         try (PrintWriter pw = new PrintWriter(new FileWriter(arquivo))) {
             for (Contato c : contatos) {
@@ -451,7 +447,7 @@ class GerenciadorContatos {
         }
     }
 
-    // Converte de um formato para todos os outros
+    // converte pros outros formatos
     public void converterFormatos(String arquivoOrigem, String formato) throws Exception {
         System.out.println("Lendo arquivo: " + arquivoOrigem);
         
